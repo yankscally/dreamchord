@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>widget</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #ebebeb;
+            font-family: "Inter", Arial, sans-serif;
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+        }
+
+        @font-face {
+            font-family: "Inter";
+            src: url("fonts/Inter.ttf") format("truetype-variations");
+            font-weight: 100 900;
+        }
+
+        html {
+            overflow: hidden;
+        }
+
+        .spinner-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .center-point {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: #333;
+            border-radius: 50%;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .center-point:hover {
+            background-color: #555;
+            transform: scale(1.1);
+        }
+
+        .center-point.active {
+            background-color: #666;
+        }
+
+        .sub-spinner-container {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 1;
+        }
+
+        .sub-spinner-container.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sub-spinner {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 75%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: rotate(0deg);
+            transition: transform 0.1s linear;
+            cursor: grab;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .sub-menu-item {
+            color: rgba(0.0,0.0,0.0,0.3);
+            position: absolute;
+            transform-origin: center;
+            font-size: 14px;
+            font-weight: bold;
+            opacity: 0.3;
+            text-align: start;
+            transition: color 0.3s ease, font-variation-settings 0.3s ease;
+            cursor: pointer;
+            font-variation-settings: "wght" 400;
+            letter-spacing: 1px;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        
+        .sub-menu-item.active {
+            color: #000;
+            font-variation-settings: "wght" 650;
+            font-size: x-large;
+            padding-left: 25px;
+            opacity: 1.0;
+            transition: font-size 0.3s ease, font-variation-settings 0.3s ease;
+        }
+
+        .spinner {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 75%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: rotate(0deg);
+            transition: transform 0.1s linear;
+            cursor: grab;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .spinner:active {
+            cursor: grabbing;
+            padding-left: 40;
+        }
+
+        .menu-item {
+            color: rgba(0.0,0.0,0.0,0.3);
+            position: absolute;
+            transform-origin: center;
+            font-size: 16px;
+            font-weight: bold;
+            opacity: 0.3;
+            text-align: start;
+            transition: color 0.3s ease, font-variation-settings 0.3s ease;
+            cursor: pointer;
+            font-variation-settings: "wght" 400;
+            letter-spacing: 1px;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        
+        .menu-item.active {
+            color: #000;
+            font-variation-settings: "wght" 650;
+            font-size: xx-large;
+            padding-left: 25px;
+            opacity: 1.0;
+            transition: font-size 0.3s ease, font-variation-settings 0.3s ease;
+        }
+
+        .info {
+            position: absolute;
+            bottom: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="spinner-container">
+        <div class="spinner" id="spinner">
+            <!-- Menu items will be added dynamically -->
+        </div>
+        <div class="center-point" id="centerPoint">♫</div>
+        <div class="sub-spinner-container" id="subSpinnerContainer">
+            <div class="sub-spinner" id="subSpinner">
+                <!-- Sub-menu items will be added dynamically -->
+            </div>
+        </div>
+    </div>
+    <div class="info">
+        
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const spinner = document.getElementById('spinner');
+            const subSpinner = document.getElementById('subSpinner');
+            const centerPoint = document.getElementById('centerPoint');
+            const subSpinnerContainer = document.getElementById('subSpinnerContainer');
+            let angle = 0;
+            let subAngle = 0;
+            let rotating = false;
+            let subRotating = false;
+            let lastMouseX = 0;
+            let lastMouseY = 0;
+            let velocity = 0;
+            let subVelocity = 0;
+            let lastTime = null;
+            let friction = 0.97; // Adjust for more or less friction
+            let animationId = null;
+            let subAnimationId = null;
+            
+            // Menu items to be displayed around the spinner
+            const menuItems = [
+                'Home', 'About', 'Services', 'Portfolio', 'Blog', 'Contact', 'Gallery', 'Team',
+            ];
+
+            // Sub-menu items for each main menu item
+            const subMenuItems = {
+                'Home': [
+                    'Dashboard', 'Welcome', 'Quick Start', 'Overview', 'Recent', 'Favorites',
+                ],
+                'About': ['Company', 'Team', 'History', 'Mission', 'Values', 'Culture'],
+                'Services': ['Web Design', 'Development', 'Marketing', 'Consulting', 'Support', 'Training'],
+                'Portfolio': ['Projects', 'Clients', 'Case Studies', 'Testimonials', 'Awards', 'Gallery'],
+                'Blog': ['Articles', 'News', 'Tutorials', 'Resources', 'Archives', 'Categories'],
+                'Contact': ['Email', 'Phone', 'Form', 'Location', 'Social Media', 'Support'],
+                'Gallery': ['Photos', 'Videos', 'Artwork', 'Designs', 'Illustrations', 'Collections'],
+                'Team': ['Members', 'Leadership', 'Departments', 'Careers', 'Partners', 'Collaborators']
+            };
+            
+            // Create menu items and position them around the spinner
+            function createMenuItems() {
+                const radius = 90; // Distance from center
+                
+                menuItems.forEach((item, index) => {
+                    const angle = (index * (360 / menuItems.length)) * (Math.PI / 180);
+                    const x = radius * Math.cos(angle);
+                    const y = radius * Math.sin(angle);
+                    
+                    const menuItem = document.createElement('div');
+                    menuItem.className = 'menu-item';
+                    menuItem.textContent = item;
+                    const rotationAngle = (index * (360 / menuItems.length));
+                    menuItem.style.transform = `translate(${x}px, ${y}px) rotate(${rotationAngle}deg)`;
+                    menuItem.dataset.index = index;
+                    
+                    spinner.appendChild(menuItem);
+                });
+                
+                updateActiveItem();
+            }
+
+            // Create sub-menu items for the active main menu item
+            function createSubMenuItems(mainItem) {
+                // Clear existing sub-menu items
+                while (subSpinner.firstChild) {
+                    subSpinner.removeChild(subSpinner.firstChild);
+                }
+
+                // Get sub-menu items for the active main menu item
+                const items = subMenuItems[mainItem] || [];
+                const radius = 140; // Distance from center for sub-menu items
+                
+                items.forEach((item, index) => {
+                    const angle = (index * (360 / items.length)) * (Math.PI / 180);
+                    const x = radius * Math.cos(angle);
+                    const y = radius * Math.sin(angle);
+                    
+                    const subMenuItem = document.createElement('div');
+                    subMenuItem.className = 'sub-menu-item';
+                    subMenuItem.textContent = item;
+                    const rotationAngle = (index * (360 / items.length));
+                    subMenuItem.style.transform = `translate(${x}px, ${y}px) rotate(${rotationAngle}deg)`;
+                    subMenuItem.dataset.index = index;
+                    
+                    subSpinner.appendChild(subMenuItem);
+                });
+                
+                updateActiveSubItem();
+            }
+            
+            // Detect iOS device
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            
+            // Create audio pool for click sounds
+            const AUDIO_POOL_SIZE = 3;
+            const MIN_SOUND_INTERVAL = 100; // Minimum ms between sounds
+            const VELOCITY_THRESHOLD = 2.0; // Threshold for considering "fast" rotation
+            let lastSoundTime = 0;
+            const audioPool = Array.from({ length: AUDIO_POOL_SIZE }, () => new Audio('cr78rimshot.wav'));
+            let currentAudioIndex = 0;
+
+            // Function to play sound from pool with debouncing and velocity check
+            function playPooledSound() {
+                const now = Date.now();
+                if (now - lastSoundTime < MIN_SOUND_INTERVAL) return;
+                
+                // Skip sound on iOS during fast rotations
+                if (isIOS && Math.abs(velocity) > VELOCITY_THRESHOLD) return;
+                
+                const audio = audioPool[currentAudioIndex];
+                audio.play().catch(e => console.log('Audio play error:', e));
+                currentAudioIndex = (currentAudioIndex + 1) % AUDIO_POOL_SIZE;
+                lastSoundTime = now;
+            }
+            
+            // Update which item is active based on current rotation angle
+            function updateActiveItem() {
+                // Normalize angle to 0-360 range
+                const normalizedAngle = ((angle % 360) + 360) % 360;
+                
+                // Calculate which item should be active (NE position is at 45 degrees)
+                // We need to invert the angle since spinner rotates clockwise but items are positioned counterclockwise
+                const adjustedAngle = (360 - normalizedAngle) % 360;
+                const activeIndex = Math.floor(adjustedAngle / (360 / menuItems.length)) % menuItems.length;
+                
+                // Get current active item
+                const currentActive = document.querySelector('.menu-item.active');
+                const newActive = document.querySelector(`.menu-item[data-index="${activeIndex}"]`);
+                
+                // Only play sound and update if active item has changed
+                if (currentActive !== newActive) {
+                    // Remove active class from all items
+                    document.querySelectorAll('.menu-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    
+                    // Add active class to the item in the NE position
+                    if (newActive) {
+                        newActive.classList.add('active');
+                        playPooledSound();
+                    }
+                }
+            }
+
+            // Update which sub-item is active based on current sub-rotation angle
+            function updateActiveSubItem() {
+                if (!subSpinnerContainer.classList.contains('active')) return;
+                
+                // Get the active main menu item
+                const activeMainItem = document.querySelector('.menu-item.active');
+                if (!activeMainItem) return;
+                
+                const mainItemText = activeMainItem.textContent;
+                const subItems = subMenuItems[mainItemText] || [];
+                if (subItems.length === 0) return;
+                
+                // Normalize angle to 0-360 range
+                const normalizedAngle = ((subAngle % 360) + 360) % 360;
+                
+                // Calculate which item should be active
+                const adjustedAngle = (360 - normalizedAngle) % 360;
+                const activeIndex = Math.floor(adjustedAngle / (360 / subItems.length)) % subItems.length;
+                
+                // Get current active sub-item
+                const currentActive = document.querySelector('.sub-menu-item.active');
+                const newActive = document.querySelector(`.sub-menu-item[data-index="${activeIndex}"]`);
+                
+                // Only play sound and update if active item has changed
+                if (currentActive !== newActive) {
+                    // Remove active class from all sub-items
+                    document.querySelectorAll('.sub-menu-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    
+                    // Add active class to the sub-item in the NE position
+                    if (newActive) {
+                        newActive.classList.add('active');
+                        playPooledSound();
+                    }
+                }
+            }
+            
+            // Initialize menu items
+            createMenuItems();
+
+            // Get the center of the spinner
+            const spinnerRect = spinner.getBoundingClientRect();
+            let centerX = spinnerRect.left + spinnerRect.width / 2;
+            let centerY = spinnerRect.top + spinnerRect.height / 2;
+
+            // Center point click event to toggle sub-spinner
+            centerPoint.addEventListener('click', function() {
+                // Toggle active class on center point
+                centerPoint.classList.toggle('active');
+                
+                // Get the active main menu item
+                const activeMainItem = document.querySelector('.menu-item.active');
+                if (!activeMainItem) return;
+                
+                // Toggle sub-spinner visibility
+                if (subSpinnerContainer.classList.contains('active')) {
+                    // Hide sub-spinner
+                    subSpinnerContainer.classList.remove('active');
+                } else {
+                    // Show sub-spinner and create sub-menu items for active main item
+                    createSubMenuItems(activeMainItem.textContent);
+                    subSpinnerContainer.classList.add('active');
+                    
+                    // Reset sub-spinner rotation
+                    subAngle = 0;
+                    subSpinner.style.transform = `rotate(${subAngle}deg)`;
+                }
+            });
+
+            // Mouse down event
+            spinner.addEventListener('mousedown', startRotation);
+            spinner.addEventListener('touchstart', handleTouchStart);
+            subSpinner.addEventListener('mousedown', startSubRotation);
+            subSpinner.addEventListener('touchstart', handleSubTouchStart);
+
+            // Mouse move event
+            document.addEventListener('mousemove', handleRotation);
+            document.addEventListener('touchmove', handleTouchMove);
+            document.addEventListener('mousemove', handleSubRotation);
+            document.addEventListener('touchmove', handleSubTouchMove);
+
+            // Mouse up event
+            document.addEventListener('mouseup', stopRotation);
+            document.addEventListener('touchend', stopRotation);
+            document.addEventListener('mouseup', stopSubRotation);
+            document.addEventListener('touchend', stopSubRotation);
+
+            function handleTouchStart(e) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                startRotation({ clientX: touch.clientX, clientY: touch.clientY });
+            }
+
+            function handleSubTouchStart(e) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                startSubRotation({ clientX: touch.clientX, clientY: touch.clientY });
+            }
+
+            function handleTouchMove(e) {
+                if (!rotating) return;
+                e.preventDefault();
+                const touch = e.touches[0];
+                handleRotation({ clientX: touch.clientX, clientY: touch.clientY });
+            }
+
+            function handleSubTouchMove(e) {
+                if (!subRotating) return;
+                e.preventDefault();
+                const touch = e.touches[0];
+                handleSubRotation({ clientX: touch.clientX, clientY: touch.clientY });
+            }
+
+            function startRotation(e) {
+                rotating = true;
+                // Cancel any ongoing animation
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                    animationId = null;
+                }
+
+                // Get the current mouse position
+                lastMouseX = e.clientX;
+                lastMouseY = e.clientY;
+                lastTime = Date.now();
+                velocity = 0;
+            }
+
+            function startSubRotation(e) {
+                if (!subSpinnerContainer.classList.contains('active')) return;
+                
+                subRotating = true;
+                // Cancel any ongoing animation
+                if (subAnimationId) {
+                    cancelAnimationFrame(subAnimationId);
+                    subAnimationId = null;
+                }
+
+                // Get the current mouse position
+                lastMouseX = e.clientX;
+                lastMouseY = e.clientY;
+                lastTime = Date.now();
+                subVelocity = 0;
+                
+                // Prevent event propagation to main spinner
+                e.stopPropagation();
+            }
+
+            function handleRotation(e) {
+                if (!rotating) return;
+
+                // Calculate the angle between the center of the spinner and the current mouse position
+                const mouseX = e.clientX;
+                const mouseY = e.clientY;
+
+                // Calculate the angle between the center and the current mouse position
+                const currentAngle = Math.atan2(mouseY - centerY, mouseX - centerX) * 180 / Math.PI;
+                // Calculate the angle between the center and the last mouse position
+                const lastAngle = Math.atan2(lastMouseY - centerY, lastMouseX - centerX) * 180 / Math.PI;
+
+                // Calculate the change in angle
+                let deltaAngle = currentAngle - lastAngle;
+
+                // Handle the case where the angle crosses the 180/-180 boundary
+                if (deltaAngle > 180) deltaAngle -= 360;
+                if (deltaAngle < -180) deltaAngle += 360;
+
+                // Update the angle
+                angle += deltaAngle;
+
+                // Calculate velocity
+                const currentTime = Date.now();
+                const deltaTime = currentTime - lastTime;
+                if (deltaTime > 0) {
+                    // Calculate new velocity and apply some smoothing with the previous velocity
+                    const newVelocity = deltaAngle / deltaTime * 20; // Adjust multiplier for more or less momentum
+                    velocity = velocity * 0.3 + newVelocity * 0.7; // Smooth velocity changes
+                }
+
+                // Update the spinner's rotation
+                spinner.style.transform = `rotate(${angle}deg)`;
+                
+                // Update active menu item
+                updateActiveItem();
+
+                // Update the last mouse position and time
+                lastMouseX = mouseX;
+                lastMouseY = mouseY;
+                lastTime = currentTime;
+            }
+
+            function handleSubRotation(e) {
+                if (!subRotating) return;
+
+                // Calculate the angle between the center of the spinner and the current mouse position
+                const mouseX = e.clientX;
+                const mouseY = e.clientY;
+
+                // Calculate the angle between the center and the current mouse position
+                const currentAngle = Math.atan2(mouseY - centerY, mouseX - centerX) * 180 / Math.PI;
+                // Calculate the angle between the center and the last mouse position
+                const lastAngle = Math.atan2(lastMouseY - centerY, lastMouseX - centerX) * 180 / Math.PI;
+
+                // Calculate the change in angle
+                let deltaAngle = currentAngle - lastAngle;
+
+                // Handle the case where the angle crosses the 180/-180 boundary
+                if (deltaAngle > 180) deltaAngle -= 360;
+                if (deltaAngle < -180) deltaAngle += 360;
+
+                // Update the angle
+                subAngle += deltaAngle;
+
+                // Calculate velocity
+                const currentTime = Date.now();
+                const deltaTime = currentTime - lastTime;
+                if (deltaTime > 0) {
+                    // Calculate new velocity and apply some smoothing with the previous velocity
+                    const newVelocity = deltaAngle / deltaTime * 20; // Adjust multiplier for more or less momentum
+                    subVelocity = subVelocity * 0.3 + newVelocity * 0.7; // Smooth velocity changes
+                }
+
+                // Update the sub-spinner's rotation
+                subSpinner.style.transform = `rotate(${subAngle}deg)`;
+                
+                // Update active sub-menu item
+                updateActiveSubItem();
+
+                // Update the last mouse position and time
+                lastMouseX = mouseX;
+                lastMouseY = mouseY;
+                lastTime = currentTime;
+                
+                // Prevent event propagation to main spinner
+                e.stopPropagation();
+            }
+
+            function stopRotation() {
+                if (!rotating) return;
+                rotating = false;
+
+                // Only start animation if there's enough velocity
+                if (Math.abs(velocity) > 0.5) {
+                    // Start the animation to gradually slow down the spinner
+                    animateSpinner();
+                }
+            }
+
+            function stopSubRotation() {
+                if (!subRotating) return;
+                subRotating = false;
+
+                // Only start animation if there's enough velocity
+                if (Math.abs(subVelocity) > 0.5) {
+                    // Start the animation to gradually slow down the sub-spinner
+                    animateSubSpinner();
+                }
+            }
+
+            function animateSpinner() {
+                if (!animationId) {
+                    animationId = requestAnimationFrame(animateSpinner);
+                    return;
+                }
+                
+                // Apply friction to slow down the spinner
+                velocity *= friction;
+
+                // Update the angle based on the velocity
+                angle += velocity;
+
+                // Update the spinner's rotation
+                spinner.style.transform = `rotate(${angle}deg)`;
+                
+                // Update active menu item
+                updateActiveItem();
+
+                // Stop the animation when the velocity is very small
+                if (Math.abs(velocity) < 0.1) {
+                    cancelAnimationFrame(animationId);
+                    animationId = null;
+                    return;
+                }
+
+                // Continue the animation
+                animationId = requestAnimationFrame(animateSpinner);
+            }
+
+            function animateSubSpinner() {
+                if (!subAnimationId) {
+                    subAnimationId = requestAnimationFrame(animateSubSpinner);
+                    return;
+                }
+                
+                // Apply friction to slow down the sub-spinner
+                subVelocity *= friction;
+
+                // Update the angle based on the velocity
+                subAngle += subVelocity;
+
+                // Update the sub-spinner's rotation
+                subSpinner.style.transform = `rotate(${subAngle}deg)`;
+                
+                // Update active sub-menu item
+                updateActiveSubItem();
+
+                // Stop the animation when the velocity is very small
+                if (Math.abs(subVelocity) < 0.1) {
+                    cancelAnimationFrame(subAnimationId);
+                    subAnimationId = null;
+                    return;
+                }
+
+                // Continue the animation
+                subAnimationId = requestAnimationFrame(animateSubSpinner);
+            }
+
+            // Handle window resize to recalculate the center
+            window.addEventListener('resize', function() {
+                const spinnerRect = spinner.getBoundingClientRect();
+                centerX = spinnerRect.left + spinnerRect.width / 2;
+                centerY = spinnerRect.top + spinnerRect.height / 2;
+            });
+        });
+    </script>
+</body>
+</html>

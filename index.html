@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dreamchord</title>
+    <style>
+
+        @font-face {
+            font-family: 'Rena';
+            src: url('/fonts/rena.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        
+        @font-face {
+            font-family: '42dot';
+            src: url('/fonts/42dot.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'Inter';
+            src: url('fonts/Inter.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --color-bg:rgb(255, 255, 255);
+            --color-text:rgb(0, 0, 0);
+            --color-accent: #333333;
+            --spacing-unit: 0.75rem;
+            --grid-max-width: 1200px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: '42dot', sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        h1, h2, h3, h4, h5, h6, header {
+            font-family: '42dot', sans-serif;
+            font-weight: normal;
+            letter-spacing: 0.05em;
+        }
+
+        .container {
+            width: 95%;
+            max-width: var(--grid-max-width);
+            margin: 0 auto;
+            padding: var(--spacing-unit) 0;
+        }
+
+        /* Header Styles */
+        .site-header {
+            padding: var(--spacing-unit) 0;
+            border-bottom: 1px solid var(--color-text);
+            margin-bottom: var(--spacing-unit);
+            text-align: left;
+        }
+
+        svg {
+            color: var(--color-accent);
+            stroke: var(--color-text);
+            fill: var(--color-text);
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: var(--spacing-unit);
+        }
+        
+        .logo-text {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(1.5rem, 4vw, 3rem);
+            letter-spacing: 0.1em;
+        }
+        
+        .star-icon {
+            width: clamp(1rem, 3vw, 2rem);
+            height: auto;
+        }
+        
+        
+        
+        /* Hero Section */
+        .hero {
+            height: 40vh;
+            padding: var(--spacing-unit);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .hero h1 {
+            font-size: clamp(2rem, 6vw, 4rem);
+            margin-bottom: calc(var(--spacing-unit) * 0.5);
+            line-height: 1.1;
+        }
+
+        .hero p {
+            font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+            max-width: 800px;
+            margin: 0;
+        }
+
+        .hero img {
+            width: 70%;
+            height: auto;
+            max-width: 200px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* Featured Releases */
+        .releases {
+            padding: calc(var(--spacing-unit) * 2) 0;
+        }
+
+        .section-title {
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            margin-bottom: var(--spacing-unit);
+            text-align: left;
+        }
+
+        .releases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: var(--spacing-unit);
+        }
+
+        .release-card {
+            border: 1px solid var(--color-text);
+            padding: calc(var(--spacing-unit) * 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .release-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .release-cover {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background-color: var(--color-accent);
+            margin-bottom: var(--spacing-unit);
+        }
+
+        .release-info h3 {
+            margin-bottom: calc(var(--spacing-unit) * 0.5);
+        }
+
+        /* About Section */
+        .about {
+            padding: calc(var(--spacing-unit) * 2) 0;
+            background-color: var(--color-text);
+            color: var(--color-bg);
+        }
+
+        .about-content {
+            font-family: Inter;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-unit);
+        }
+
+        @media (max-width: 768px) {
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Footer */
+        footer {
+            padding: var(--spacing-unit) 0;
+            border-top: 1px solid var(--color-text);
+            text-align: left;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: flex-start;
+            gap: calc(var(--spacing-unit) * 1.5);
+            margin-bottom: calc(var(--spacing-unit) * 0.5);
+        }
+
+        .footer-links a {
+            color: var(--color-text);
+            text-decoration: none;
+        }
+
+        /* Utility Classes */
+        .text-center {
+            text-align: center;
+        }
+
+
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <div class="logo-container">
+                <h1 class="logo-text">Dreamchord</h1>
+                <img src="logo.svg" class="logo">
+            </div>
+        </div>
+    </header>
+    
+    <section class="hero">
+        <div class="container">
+            <img src="logo.svg">
+            <!-- <h1>Dreamchord</h1>
+            <p>A record label dedicated to the intersection of visual aesthetics and sonic exploration.</p> -->
+        </div>
+    </section>
+
+    <!-- <section id="releases" class="releases">
+        <div class="container">
+            <h2 class="section-title">Latest Releases</h2>
+            <div class="releases-grid">
+                <div class="release-card">
+                    <div class="release-cover"></div>
+                    <div class="release-info">
+                        <h3>Yank Scally</h3>
+                        <p>Good Times Forever</p>
+                        <p>DREAM 001 • 2024</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section> -->
+
+    <section id="about" class="about">
+        <div class="container">
+            <!-- <h2 class="section-title">Why</h2> -->
+            <div class="about-content">
+                <div>
+                    I did not expect to be here now. Things have changed forever. Moving on is good. Moving on is hard. Doing things differently. Everyone rushing towards the same thing. Traffic jams and congestion. Follow the signs. Follow the lights, stare at the screens forever. Look at the words and become them. Open your arms to me. There are more flowers growing today than ever before. You are a human, you have dreams and you should follow them.
+                    Everyone deserves to dream. Wait a while and count the days not the hours. The patience will be painful but important. Good life taken for granted too much. Existence is important. The universe has feelings, don't hurt them. We have the privilege to look after the planet and creatures it gave us. I feel so young and ready to help.
+                    The world we made was moving too fast. The unbreakable engine of commerce has broken down, and a new age of enlightenment will take its place. Put your dreams there. The rat race has finished. The 'show must go on' they will say. Ignore them. Look towards a bright future filled with happiness and nature. The dreams must go on. The idea of utopia is not a place we build in reality. It comes from within ourselves. We have to make the utopia in our minds. There is no return to normal after so why not make it good.
+                </div>
+                <div style="text-align: end;">
+                    <h2>Yank Scally</h2><br /> Dreamchord Operator
+                </div>
+            </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="events" class="releases">
+        <div class="container">
+            <h2 class="section-title">Upcoming Events</h2>
+            <div style="border: 1px solid var(--color-text); padding: calc(var(--spacing-unit) * 0.5); margin-bottom: var(--spacing-unit);">
+                <h3>Unexpected Music Festival</h3>
+                <p>May 1st 2025 • Munich, Germany</p>
+                <p>Description goes here.</p>
+            </div>
+            <!-- <div style="border: 1px solid var(--color-text); padding: calc(var(--spacing-unit) * 0.5); margin-bottom: var(--spacing-unit);">
+                <h3>Sound Design Workshop</h3>
+                <p>July 8, 2024 • London, UK</p>
+                <p>Learn sound design techniques from Dreamchord artists.</p>
+            </div>
+            <div style="border: 1px solid var(--color-text); padding: calc(var(--spacing-unit) * 0.5);">
+                <h3>Label Night</h3>
+                <p>August 22, 2024 • New York, USA</p>
+                <p>Celebrating our latest releases with live performances.</p>
+            </div> -->
+        </div>
+    </section>
+
+    <section id="contact" class="container" style="padding: calc(var(--spacing-unit) * 2) 0; text-align: left;">
+        <h2 class="section-title">Contact</h2>
+        <p>For inquiries: dreamchord@outlook.com</p>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <!-- <a href="#">Instagram</a> -->
+                <a href="#">Bandcamp</a>
+                <!-- <a href="#">SoundCloud</a> -->
+            </div>
+            <p>&copy; 2025 Dreamchord</p>
+        </div>
+    </footer>
+
+    <script>
+        // Simple animation for page elements
+        document.addEventListener('DOMContentLoaded', () => {
+            const fadeInElements = document.querySelectorAll('.hero, .section-title, .release-card');
+            
+            fadeInElements.forEach((element, index) => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+                element.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                
+                setTimeout(() => {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, 300 + (index * 150));
+            });
+        });
+    </script>
+</body>
+</html>
