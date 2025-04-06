@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dreamchord</title>
-    <style>
 
+    <title>Dreamchord</title>
+
+    <style>
         @font-face {
             font-family: 'Rena';
             src: url('/fonts/rena.ttf') format('truetype');
@@ -13,7 +14,6 @@
             font-style: normal;
         }
 
-        
         @font-face {
             font-family: '42dot';
             src: url('/fonts/42dot.ttf') format('truetype');
@@ -43,7 +43,7 @@
         }
 
         body {
-            font-family: '42dot', sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: var(--color-bg);
             color: var(--color-text);
             line-height: 1.6;
@@ -51,7 +51,7 @@
         }
 
         h1, h2, h3, h4, h5, h6, header {
-            font-family: '42dot', sans-serif;
+            font-family: 'Inter', sans-serif;
             font-weight: normal;
             letter-spacing: 0.05em;
         }
@@ -99,6 +99,7 @@
         
         /* Hero Section */
         .hero {
+            font-size: 66px;
             height: 40vh;
             padding: var(--spacing-unit);
             display: flex;
@@ -217,17 +218,19 @@
         <div class="container">
             <div class="logo-container">
                 <h1 class="logo-text">Dreamchord</h1>
-                <img src="logo.svg" class="logo">
+                <!-- <img src="logo.svg" class="logo"> -->
             </div>
         </div>
     </header>
     
     <section class="hero">
+        ↜
         <div class="container">
             <img src="logo.svg">
             <!-- <h1>Dreamchord</h1>
             <p>A record label dedicated to the intersection of visual aesthetics and sonic exploration.</p> -->
         </div>
+        ↝
     </section>
 
     <!-- <section id="releases" class="releases">
@@ -268,8 +271,12 @@
         <div class="container">
             <h2 class="section-title">Upcoming Events</h2>
             <div style="border: 1px solid var(--color-text); padding: calc(var(--spacing-unit) * 0.5); margin-bottom: var(--spacing-unit);">
-                <h3>Unexpected Music Festival</h3>
-                <p>May 1st 2025 • Munich, Germany</p>
+                <h3>Unexpected Music</h3>
+                <div class="event-links">
+                    <a href="https://unexpected-music.com/">https://unexpected-music.com/</a>
+                </div>
+                <p>Munich, Germany</p>
+                <p>May 1st-3rd 2025</p>
                 <p>Description goes here.</p>
             </div>
             <!-- <div style="border: 1px solid var(--color-text); padding: calc(var(--spacing-unit) * 0.5); margin-bottom: var(--spacing-unit);">
@@ -285,6 +292,12 @@
         </div>
     </section>
 
+    <section>
+        <div class="container">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam aliquam ipsa consequuntur excepturi. Doloremque sed facere veritatis, iste eaque, natus nemo porro quaerat sunt ad, quam quisquam provident voluptate magnam.
+        </div>
+    </section>
+
     <section id="contact" class="container" style="padding: calc(var(--spacing-unit) * 2) 0; text-align: left;">
         <h2 class="section-title">Contact</h2>
         <p>For inquiries: dreamchord@outlook.com</p>
@@ -293,30 +306,13 @@
     <footer>
         <div class="container">
             <div class="footer-links">
-                <!-- <a href="#">Instagram</a> -->
                 <a href="#">Bandcamp</a>
+                <!-- <a href="#">Instagram</a> -->
                 <!-- <a href="#">SoundCloud</a> -->
             </div>
             <p>&copy; 2025 Dreamchord</p>
         </div>
     </footer>
 
-    <script>
-        // Simple animation for page elements
-        document.addEventListener('DOMContentLoaded', () => {
-            const fadeInElements = document.querySelectorAll('.hero, .section-title, .release-card');
-            
-            fadeInElements.forEach((element, index) => {
-                element.style.opacity = '0';
-                element.style.transform = 'translateY(20px)';
-                element.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-                
-                setTimeout(() => {
-                    element.style.opacity = '1';
-                    element.style.transform = 'translateY(0)';
-                }, 300 + (index * 150));
-            });
-        });
-    </script>
 </body>
 </html>

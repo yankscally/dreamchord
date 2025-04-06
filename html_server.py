@@ -5,7 +5,7 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
-PORT = 80
+PORT = 6969
 DEFAULT_PAGE = 'index.html'
 WATCH_EXTENSIONS = ['.html', '.css', '.js']  # File extensions to watch for changes
 
